@@ -1,4 +1,46 @@
 
+
+import java.util.ArrayList;
+import java.util.List;
+
+// Subject (Observable)
+interface Subject {
+    void registerObserver(Observer observer);
+    void removeObserver(Observer observer);
+    void notifyObservers();
+}
+
+// Concrete Subject
+class WeatherStation implements Subject {
+    private double temperature;
+    private List<Observer> observers;
+
+    public WeatherStation() {
+        observers = new ArrayList<>();
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+        notifyObservers();
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(temperature);
+        }
+    }
+}
 // Observer
 interface WeatherObserver {
     void update(int temperature);
@@ -32,8 +74,8 @@ public class Main {
         TemperatureDisplay temperatureDisplay = new TemperatureDisplay();
         Fan fan = new Fan();
 
-        weatherStation.addObserver(temperatureDisplay);
-        weatherStation.addObserver(fan);
+        weatherStation.registerObserver(temperatureDisplay);
+        weatherStation.registerObserver(fan);
 
         // Simulate temperature change
         weatherStation.setTemperature(30);
